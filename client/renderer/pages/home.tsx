@@ -36,15 +36,12 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
     Tooltip,
     Filler,
     Legend);
-// Halaman dashboard monirotring suhu
 const Page = () => {
     const [time, setTime] = useState("00:00:00")
-const [celcius,setCelcius] = useState(0)
-const [farenheit,setFarenheit] = useState(0)
-    socket.on('suhu-10-menit',data=>{
-       console.log(data)
-    })
-
+    const [celcius, setCelcius] = useState(0)
+    const [farenheit, setFarenheit] = useState(0)
+    const [tempratures, setTempratures] = useState([])
+const [suhuDataset,setSuhuDataset] = useState([])
     function getTimeInHHMMSSFormat() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
@@ -54,22 +51,54 @@ const [farenheit,setFarenheit] = useState(0)
     }
 
     useEffect(() => {
+        socket.on('data-suhu', data => {
+            console.log(data)
+            setTempratures(data)
+        })
+
+        socket.on('suhu-sekarang',data=>{
+            const {c,f} = data
+            setCelcius(c)
+           setFarenheit(f)
+        })
+
+        const groupedData = tempratures.reduce((result, item) => {
+            const createdAt = new Date(item.createdAt);
+            const minuteKey = `${createdAt.getMinutes()}`;
+            if (!result[minuteKey]) {
+                result[minuteKey] = [];
+            }
+            result[minuteKey].push(item);
+            return result;
+        }, {});
+
+
+        const averageData = [];
+
+        for (const minuteKey in groupedData) {
+            const dataPerMinute = groupedData[minuteKey];
+            const sum = dataPerMinute.reduce((total, item) => total + item.celsius, 0);
+            const average = parseFloat((sum / dataPerMinute.length).toFixed(2));
+            const createdAt = new Date(dataPerMinute[0].createdAt);
+            const formattedTime = `${createdAt.getHours()}:${createdAt.getMinutes()}`;
+
+          setSuhuDataset(state=>[...state,{
+              time: formattedTime,
+              average,
+          }])
+        }
+        console.log(averageData)
+
         const intervalId = setInterval(() => {
             setTime(getTimeInHHMMSSFormat());
         }, 1000); // Setiap 1 detik
 
-        // Membersihkan interval saat komponen tidak lagi digunakan
-        return () => clearInterval(intervalId);
-    }, [time])
+        return () => {
+            clearInterval(intervalId);
+        }
+    }, [tempratures])
 
-    const suhuCelsius = [22, 40, 24, 25, 26, 27, 28, 29, 18, 31, 32, 33,
-        34, 35, 36, 37, 38, 39, 20, 41, 42, 43, 44, 22];
 
-    function celsiusToFahrenheit(celsius) {
-        return (celsius * 9 / 5) + 32;
-    }
-
-    const suhuFahrenheit = suhuCelsius.map(celsiusToFahrenheit);
     return (
         <div className={`h-screen flex flex-col p-3 gap-4`}>
             <div className={`flex justify-center basis-[30%] space-x-3 p-5 bg-[#21222D] `}>
@@ -98,49 +127,47 @@ const [farenheit,setFarenheit] = useState(0)
 
             </div>
             <div className={`basis-full flex items-center space-x-3 `}>
-                <Container className={'h-full basis-[58%]'}>
-                    {/*grafik suhu ruangan perhari satuan celcius dan fahrenheit*/}
-                    <Line
-                        options={{
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'top' as const,
-                                },
-                                title: {
-                                    display: true,
-                                    text: "Suhu ruangan perhari",
-                                },
+                {
+                    suhuDataset.length > 0 ?
 
-                            },
-                            showLine: true,
+                        <Container className={'h-full basis-[58%]'}>
 
-                        }}
-                        data={
-                            {
+                            <Line
+                                options={{
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top' as const,
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: "Suhu ruangan perhari",
+                                        },
 
-                                // label perjam
-                                labels: jamArray,
-
-                                datasets: [
-                                    {
-                                        label: 'Suhu Celcius',
-                                        data: suhuCelsius,
-                                        fill: true,
-                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                        borderColor: 'rgb(255, 99, 132)',
                                     },
+                                    showLine: true,
+
+                                }}
+                                data={
                                     {
-                                        label: 'Suhu Fahrenheit',
-                                        data: suhuFahrenheit,
-                                        fill: true,
-                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                        borderColor: 'rgb(54, 162, 235)',
-                                    },
-                                ],
-                            }
-                        }/>
-                </Container>
+
+                                        // label perjam
+                                        labels: suhuDataset.map(item=>item.time),
+
+                                        datasets: [
+                                            {
+                                                label: 'Suhu Celcius',
+                                                data: suhuDataset.map(item=>item.average),
+                                                fill: true,
+                                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                                borderColor: 'rgb(255, 99, 132)',
+                                            },
+
+                                        ],
+                                    }
+                                }/>
+                        </Container>:''
+                }
                 <Container className={'h-full basis-[40%]'}>
                     <Kelmbababan
                         width={500}
