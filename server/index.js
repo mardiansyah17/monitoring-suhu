@@ -18,6 +18,22 @@ const socket = new Server(server, {
 socket.on('connection', async io => {
 
     console.log(`client ${io.id} sudah tersambung`)
+
+    setInterval(() => {
+        const min = 35;
+        const max = 43;
+        const randomDecimal = (Math.random() * (max - min) + min).toFixed(2);
+        const result = parseFloat(randomDecimal);
+        const date = new Date();
+        let data = {
+            celsius: result,
+            farenheit: parseFloat(((result * 9 / 5) + 32).toFixed(2)),
+            createdAt: date.toISOString()
+        }
+        io.emit('suhu-sekarang', data)
+    }, 1000)
+
+
     io.on('disconnect', () => console.log(`${io.id} sudah terputus`))
 })
 
