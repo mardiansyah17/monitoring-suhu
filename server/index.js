@@ -24,12 +24,17 @@ const parser = serialPort.pipe(new ReadlineParser({delimiter: '\n'}));
 
 serialPort.on('open', () => {
 
-    parser.on('data', data => {
-        console.log(data)
-        // io.emit('suhu-sekarang', {c, f})
-    })
 
     socket.on('connection', async io => {
+
+        parser.on('data', data => {
+            const {c, f, h} = JSON.parse(data)
+            io.emit("suhu-sekarang", {
+                c: parseFloat(c),
+                f: parseFloat(f),
+                h: parseFloat(h)
+            })
+        })
 
         console.log(`client ${io.id} sudah tersambung`)
 

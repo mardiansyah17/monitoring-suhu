@@ -3,22 +3,21 @@
 #define DHTPIN 7
 #define DHTTYPE DHT22
 
+DHT dht(DHTPIN, DHTTYPE);
+
 #include <Arduino_JSON.h>
 #include <assert.h>
 
-DHT dht(DHTPIN, DHTTYPE);
-
 void setup() {
   Serial.begin(9600);
-  Serial.println("DHT 22 test!");
   dht.begin();
 }
 
 void loop() {
 
-  JSONVar data;
+JSONVar data;
 
-  delay(1000);
+  delay(2000);
   float h = dht.readHumidity();
   // Read temperature as Celsius (the default)
   float t = dht.readTemperature();
@@ -28,8 +27,9 @@ void loop() {
     Serial.println("Failed to read from DHT sensor!");
     return;
   }
-  data["t"] = t;
-  data["h"] = h;
 
-  Serial.println(data);
+  data["c"] = String(t, 2);
+  data["h"] = String(h, 2);
+  data["f"] =String( ((t * 9 / 5) + 32),2);
+Serial.println(data);
 }

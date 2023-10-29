@@ -9,8 +9,9 @@ export const CurrentTemprature = () => {
 
     useEffect(() => {
         socket.on('suhu-sekarang', data => {
-            setFarenheit(data.farenheit)
-            setCelcius(data.celsius)
+            const {c, f} = data
+            setFarenheit(f)
+            setCelcius(c)
         })
     }, []);
     return (

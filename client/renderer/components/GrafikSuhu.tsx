@@ -3,18 +3,22 @@ import {socket} from "../libs/socket";
 import Container from "./Container";
 import {Line} from "react-chartjs-2";
 
+
 export const GrafikSuhu = () => {
+
+
     const [suhuDataset, setSuhuDataset] = useState([])
     const calculateTempratures = (dataTempratures) => {
-        const {createdAt, celsius, farenheit} = dataTempratures
-        const date = new Date(createdAt)
-        dataTempratures = {
+        const {createdAt, c, f} = dataTempratures
+        const date = new Date()
+        let x = {
             time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-            celsius,
-            farenheit
+            c,
+            f
 
         }
-        let oldData = [...suhuDataset, dataTempratures]
+
+        let oldData = [...suhuDataset, x]
         if (oldData.length > 50) {
             oldData.splice(0, 10)
         }
@@ -25,7 +29,7 @@ export const GrafikSuhu = () => {
         socket.on('suhu-sekarang', data => {
             calculateTempratures(data)
         })
-        console.log(suhuDataset)
+        // console.log(suhuDataset)
     }, [suhuDataset])
 
     if (suhuDataset.length == 0) {
@@ -62,11 +66,18 @@ export const GrafikSuhu = () => {
                             datasets: [
                                 {
                                     label: 'Suhu Celcius',
-                                    data: suhuDataset.map(item => item.celsius),
+                                    data: suhuDataset.map(item => item.c),
                                     fill: true,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgb(255, 99, 132)',
+                                    backgroundColor: 'rgba(130,154,251,0.2)',
+                                    borderColor: 'rgb(92,78,251)',
                                 },
+                                // {
+                                //     label: 'Suhu Farenheit',
+                                //     data: suhuDataset.map(item => item.f),
+                                //     fill: true,
+                                //     backgroundColor: 'rgba(248,181,72,0.2)',
+                                //     borderColor: 'rgb(251,162,78)',
+                                // },
 
                             ],
                         }
