@@ -33,6 +33,14 @@
   resolved "https://registry.yarnpkg.com/@serialport/bindings-interface/-/bindings-interface-1.2.2.tgz#c4ae9c1c85e26b02293f62f37435478d90baa460"
   integrity sha512-CJaUd5bLvtM9c5dmO9rPBHPXTa9R2UwpkJ0wdh9JCYcbrPWsKz+ErvR0hBLeo7NPeiFdjFO4sonRljiw4d2XiA==
 
+"@serialport/list@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@serialport/list/-/list-12.0.0.tgz#3e3b0522bb1d1ff67f4c27eb8cf7aa1221eeeb7f"
+  integrity sha512-TyGSCbnBbdpjL93uYb3gyFINkux5q2Ksqz3yL5yqwS6RpORNDudD/x7BEvG1o7SNAwhbC6JZAaXq4WnE3fr9sg==
+  dependencies:
+    "@serialport/bindings-cpp" "12.0.1"
+    commander "11.0.0"
+
 "@serialport/parser-byte-length@12.0.0":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@serialport/parser-byte-length/-/parser-byte-length-12.0.0.tgz#18b1db5d1b3b9d8e1153eb2ab3975ac5445b844a"
@@ -195,6 +203,11 @@ call-bind@^1.0.0:
   dependencies:
     function-bind "^1.1.1"
     get-intrinsic "^1.0.2"
+
+commander@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-11.0.0.tgz#43e19c25dbedc8256203538e8d7e9346877a6f67"
+  integrity sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==
 
 content-disposition@0.5.4:
   version "0.5.4"

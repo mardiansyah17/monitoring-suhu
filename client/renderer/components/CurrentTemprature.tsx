@@ -1,10 +1,18 @@
 import Container from "./Container";
 import {RiCelsiusLine, RiFahrenheitLine} from "react-icons/ri";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {socket} from "../libs/socket";
 
 export const CurrentTemprature = () => {
     const [celcius, setCelcius] = useState(0)
     const [farenheit, setFarenheit] = useState(0)
+
+    useEffect(() => {
+        socket.on('suhu-sekarang', data => {
+            setFarenheit(data.farenheit)
+            setCelcius(data.celsius)
+        })
+    }, []);
     return (
         <>
             <Container>
