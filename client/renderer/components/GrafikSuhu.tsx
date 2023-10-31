@@ -32,9 +32,6 @@ export const GrafikSuhu = () => {
         // console.log(suhuDataset)
     }, [suhuDataset])
 
-    if (suhuDataset.length == 0) {
-        return null
-    }
 
     return (
         <>

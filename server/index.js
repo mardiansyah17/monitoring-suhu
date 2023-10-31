@@ -11,7 +11,7 @@ const port = 4000
 
 const socket = new Server(server, {
     cors: {
-        origin: `http://localhost:8888`,
+        origin: `app://.`,
     },
 });
 

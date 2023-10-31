@@ -38,7 +38,8 @@ export const GrafikKelembaban = () => {
                 }}
                 pointer={{
                     elastic: true,
-                    animationDelay: 0
+                    animationDelay: 1000,
+                    baseColor: '#b7b7b7',
                 }}
             />
         </Container>
